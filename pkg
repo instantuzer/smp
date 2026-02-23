@@ -17,6 +17,7 @@ firefox
 firefox-ublock-origin
 pipewire
 pipewire-pulse
+rtkit
 vim
 redshift
 xss-lock

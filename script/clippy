@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+echo "=== X11 CLIPBOARD DUMP ==="
+echo
+
+dump() {
+  local name="$1"
+  local sel="$2"
+
+  echo "--- $name ---"
+  if out=$(xclip -o -selection "$sel" 2>/dev/null); then
+    [[ -n "$out" ]] && echo "$out" || echo "(empty)"
+  else
+    echo "(unavailable)"
+  fi
+  echo
+}
+
+dump "PRIMARY (mouse select)" primary
+dump "CLIPBOARD (Ctrl+C)" clipboard
+dump "SECONDARY (rarely used)" secondary
+
+echo "--- CUT BUFFERS ---"
+for i in {0..7}; do
+  if out=$(xclip -o -selection "cut-buffer-$i" 2>/dev/null); then
+    [[ -n "$out" ]] && echo "CUT_BUFFER$i: $out" || echo "CUT_BUFFER$i: (empty)"
+  fi
+done
+

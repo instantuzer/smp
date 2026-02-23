@@ -1,0 +1,65 @@
+#exec_always --no-startup-id xdg-settings set default-web-browser firefox.desktop
+#exec --no-startup-id firefox
+#exec --no-startup-id firefox --class startup-firefox
+#firefox --new-window about:blank
+#exec --no-startup-id i3-msg "workspace 2; exec firefox"
+#exec --no-startup-id i3-msg 'workspace $h1; exec firefox; sleep 2; workspace back_and_forth'
+#exec --no-startup-id sh -c 'i3-msg "workspace $h1; exec firefox"; sleep 2; i3-msg "workspace back_and_forth"'
+# > /tmp/update.log 2>&1
+#exec_always --no-startup-id setxkbmap -option caps:escape_shifted_capslock
+#exec --no-startup-id nm-applet
+#exec --no-startup-id picom -b
+#exec --no-startup-id feh --bg-scale ~/lol/bg.png
+#exec --no-startup-id i3-msg "workspace 1; exec alacritty -e btop -t -u 100" && \
+#					 i3-msg "workspace 3; exec alacritty"
+#        statusline #bfbfbf
+#	focused_workspace  #285577 #285577 #ffffff
+#bar {
+#    output HDMI1
+#    height 28
+#    separator_symbol " "
+#    position bottom
+#    status_command i3status
+#
+#    colors {
+#        background #0c0c0c
+#        focused_statusline #ffa800
+#	statusline #bfbfbf
+#	focused_workspace  #285577 #285577 #ffffff
+#	inactive_workspace #33333300 #0c0c0c #888888
+#    }
+#    }
+#bar {
+#    output HDMI-1
+#    height 35
+#    status_command i3status
+#    separator_symbol " "
+#    font pango:monospace 12
+#    position top
+#}
+#bindsym $mod+b bar mode toggle
+#bindsym $mod+b exec bluetoothctl power on
+#bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
+#bindsym $mod+Shift+w exec helium-browser
+#bindsym $mod+Shift+g exec helium-browser --new-window grok.com
+#bindsym $mod+Shift+i exec $term -e ~/script/
+#bindsym $mod+x exec --no-startup-id xcolor >> lol.txt
+#bindsym $mod+Shift+d exec --no-startup-id setxkbmap -option caps:escape_shifted_capslock
+#### AUDIO ####
+# pactl list short sinks
+# pactl list sinks short
+#### AUDIO CARD PROFILE ####
+#bindsym exec --no-startup-id pactl set-card-profile alsa_output.usb-Sony_Interactive_Entertainment_Wireless_Controller-00.analog-stereo
+#### AUDIO SINKS ####
+#### MONITOR ####
+#bindsym $mod+n exec --no-startup-id feh --bg-scale ~/lol/bg.png
+#bindsym $mod+backslash exec --no-startup-id pkill picom
+#bindsym $mod+m layout default
+#### MOUSE ####
+#### DEFAULT ####
+#bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit ; pkill bat ; pkill up2'"
+#### MAIN ####
+#for_window [class="firefox"] move to scratchpad
+#for_window [class="startup-firefox"] move to scratchpad 
+#gaps inner 2
+#gaps outer 8

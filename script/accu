@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+
+import asyncio
+import aiohttp
+import socket
+import time
+
+ACCUWEATHER_API_KEY = "zpka_6b37bee16705477d971a3d318572d3c2_273872ae"
+ACCU_LOCATION_KEY = "251402"
+
+CITIES = {
+    "Rijswijk": (52.0369, 4.3250),
+    "Bleijswijk": (52.0100, 4.5333),
+}
+
+# Convert m/s → Beaufort
+def ms_to_beaufort(ms):
+    scale = [
+        (0.2, 0), (1.5, 1), (3.3, 2), (5.4, 3),
+        (7.9, 4), (10.7, 5), (13.8, 6), (17.1, 7),
+        (20.7, 8), (24.4, 9), (28.4, 10), (32.6, 11),
+        (float("inf"), 12)
+    ]
+    for limit, bft in scale:
+        if ms <= limit:
+            return bft
+
+async def fetch_json(session, url, params=None, name=""):
+    try:
+        async with session.get(url, params=params) as response:
+            response.raise_for_status()
+            return await response.json()
+    except Exception as e:
+        print(f"[{name}] ERROR: {e}")
+        return None
+
+async def get_weather(session, city, lat, lon):
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "current_weather": "true",
+        "windspeed_unit": "ms"
+    }
+
+    data = await fetch_json(session, url, params, city)
+    if not data:
+        return
+
+    temp = data["current_weather"]["temperature"]
+    wind_ms = data["current_weather"]["windspeed"]
+    wind_bft = ms_to_beaufort(wind_ms)
+
+    print(f"[{city}] 🌡 {temp}°C | 🌬   {wind_bft} BFT")
+
+async def get_crypto(session):
+    url = "https://api.coingecko.com/api/v3/simple/price"
+    params = {
+        "ids": "bitcoin,ethereum,dogecoin",
+        "vs_currencies": "eur"
+    }
+
+    data = await fetch_json(session, url, params, "Crypto")
+    if not data:
+        return
+
+    print(f"[BTC] €{data['bitcoin']['eur']}")
+    print(f"[ETH] €{data['ethereum']['eur']}")
+    print(f"[DOGE] €{data['dogecoin']['eur']}")
+
+async def get_accuweather(session):
+    url = f"https://dataservice.accuweather.com/currentconditions/v1/{ACCU_LOCATION_KEY}"
+    params = {
+        "apikey": ACCUWEATHER_API_KEY,
+        "details": "true"
+    }
+
+    data = await fetch_json(session, url, params, "AccuWeather")
+    if not data:
+        return
+
+    temp = data[0]["Temperature"]["Metric"]["Value"]
+    realfeel = data[0]["RealFeelTemperature"]["Metric"]["Value"]
+
+    print(f"[AccuWeather 251402] 🌡 {temp}°C | RealFeel {realfeel}°C")
+
+async def main():
+    timeout = aiohttp.ClientTimeout(total=10)
+
+    connector = aiohttp.TCPConnector(
+        family=socket.AF_INET,  # force IPv4 (fixes many Arch issues)
+        ssl=False
+    )
+
+    async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
+        tasks = []
+
+        for city, (lat, lon) in CITIES.items():
+            tasks.append(get_weather(session, city, lat, lon))
+
+        tasks.append(get_crypto(session))
+        tasks.append(get_accuweather(session))
+
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+if __name__ == "__main__":
+    start = time.time()
+    asyncio.run(main())
+    print(f"\nFinished in {round(time.time() - start, 2)} sec")
+
+    input("\nPress Enter to exit...")

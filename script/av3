@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+mic_active="no"
+cam_active="no"
+
+# ---- MICROPHONE ----
+if pw-cli ls Node 2>/dev/null | grep -q 'media.class = "Stream/Input/Audio"'; then
+    mic_active="yes"
+fi
+
+# ---- CAMERA ----
+for dev in /dev/video*; do
+    if [ -e "$dev" ] && fuser "$dev" >/dev/null 2>&1; then
+        cam_active="yes"
+    fi
+done
+
+# ---- NOTIFY ----
+ID=9991
+
+if [[ "$mic_active" == "yes" && "$cam_active" == "yes" ]]; then
+    dunstify -u critical -r $ID "🎤📷 Recording Active" "Microphone and Camera are in use"
+elif [[ "$mic_active" == "yes" ]]; then
+    dunstify -u critical -r $ID "🎤 Microphone Active" "Microphone is currently recording"
+elif [[ "$cam_active" == "yes" ]]; then
+    dunstify -u critical -r $ID "📷 Camera Active" "Camera is currently in use"
+else
+    dunstify -u low -r $ID "AV Status" "No active microphone or camera usage"
+fi

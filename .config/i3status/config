@@ -1,0 +1,40 @@
+order += "volume master"
+order += "wireless _first_"
+order += "ethernet _first_"
+order += "battery all"
+order += "tztime local"
+
+general {
+interval = 5
+}
+
+volume master {
+format = "%volume"
+format_muted = "-"
+device = "default"
+}
+
+wireless _first_ {
+format_up = "%essid%quality"
+format_down = "-"
+}
+
+ethernet _first_ {
+format_up = "#"
+format_down = "-"
+}
+
+battery all {
+format = "%percentage %status"
+status_chr = "+"
+status_bat = "!"
+status_full = " "
+status_idle = " "
+last_full_capacity = true
+hide_seconds = true
+format_percentage = "%.00f"
+}
+
+tztime local {
+format = "%a %b %d, %H:%M "
+}

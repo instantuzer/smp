@@ -1,0 +1,221 @@
+#### EXEC ####
+
+exec --no-startup-id xss-lock -l -- i3lock -n -f -p win -c 000000 &
+exec --no-startup-id i3-msg "workspace 3; exec $term"
+exec --no-startup-id redshift -P -O 4000
+exec --no-startup-id dunst
+exec --no-startup-id ~/script/bat
+exec --no-startup-id ~/script/up1
+exec --no-startup-id ~/script/up2
+
+#### MAIN ####
+
+bindsym $mod+c kill
+bindsym $mod+w exec firefox
+#bindsym $mod+y exec firefox --new-window https://www.youtube.com/playlist?list=LL
+bindsym $mod+y exec firefox --new-window https://www.youtube.com/playlist?list=WL
+bindsym $mod+g exec firefox --new-window maps.google.com
+bindsym $mod+e exec caja
+bindsym $mod+v exec eom
+bindsym $mod+u exec mate-calc
+#bindsym $mod+n exec --no-startup-id sh -ci "$term -e rf"
+
+bindsym $mod+b exec $term -e 'yes' 
+bindsym $mod+m exec $term -e yazi
+bindsym $mod+i exec $term -e python ~/script/accu
+
+bindsym $mod+s exec --no-startup-id shotgun
+bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons -theme gruvbox-dark
+bindsym $mod+x exec --no-startup-id ~/script/ssh
+bindsym $mod+h exec --no-startup-id pkill feh & xsetroot -solid "#0c0c0c"
+bindsym $mod+q exec --no-startup-id dunstctl close-all
+bindsym $mod+l exec --no-startup-id sh -c 'dunstctl set-paused toggle && dunstify -r 7777 dunst on'
+
+bindsym $mod+f layout toggle tabbed split
+bindsym $mod+z floating toggle
+bindsym $mod+a focus left
+bindsym $mod+k focus right
+
+bindsym $mod+semicolon fullscreen toggle
+bindsym $mod+minus scratchpad show
+bindsym $mod+Right focus right
+bindsym $mod+Tab workspace back_and_forth
+bindsym $mod+Return exec $term
+bindsym $mod+KP_Enter exec --no-startup-id sh -c "$term -e sudo systemctl start bluetooth && bluetoothctl --timeout 60 scan on & $term -e bluetoothctl"
+bindsym $mod+Shift+KP_Enter exec --no-startup-id sh -c "bluetoothctl --timeout 60 scan on"
+
+bindsym $mod+Shift+e exec caja sftp://192.168.178.20
+bindsym $mod+Shift+w exec firefox --new-window chatgpt.com
+bindsym $mod+Shift+n exec --no-startup-id sh -c "$term -e python3 -m http.server 8080 --directory /var/cache/pacman/pkg"
+bindsym $mod+Shift+g exec firefox --new-window grok.com
+bindsym $mod+Shift+s exec --no-startup-id maim | xclip -selection clipboard -t image/png
+
+bindsym $mod+Shift+minus move scratchpad
+
+bindsym $mod+Ctrl+s exec --no-startup-id maim -s | xclip -selection clipboard -t image/png
+
+bindsym XF86AudioStop exec "i3-nagbar -m 'Reboot the system now?' -b 'Reboot' 'systemctl reboot'
+bindsym XF86AudioPlay exec --no-startup-id systemctl suspend
+
+bindsym KP_Add exec playerctl play-pause
+bindsym Shift+KP_Add exec --no-startup-id systemctl reboot
+bindsym Ctrl+slash exec --no-startup-id sh -c "$term -e bluetoothctl connect B8:F6:53:95:AE:12 && exec bash"
+
+#### MONITOR ####
+
+bar {
+    output eDP1
+    height 37
+    status_command i3status
+    colors {
+           background #0c0c0c
+           focused_statusline #ffa800
+           inactive_workspace #33333300 #0c0c0c #888888
+    }
+}
+
+bar {
+    output HDMI1
+    height 37
+    status_command i3status
+    position top
+    colors {
+           background #0c0c0c
+           focused_statusline #ffa800
+           inactive_workspace #33333300 #0c0c0c #888888
+    }
+}
+
+bindsym $mod+Shift+u exec --no-startup-id redshift -P -O 4000
+bindsym $mod+backslash exec --no-startup-id redshift -x
+
+#bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set 8%+
+#bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 8%-
+bindsym XF86MonBrightnessUp exec ~/script/volbright bright-up && $refresh_i3status
+bindsym XF86MonBrightnessDown exec ~/script/volbright bright-down && $refresh_i3status
+
+bindsym Ctrl+Shift+y exec --no-startup-id xset s on +dpms
+bindsym Ctrl+Shift+g exec --no-startup-id xset s off -dpms
+
+bindsym $mod+KP_Add exec --no-startup-id i3lock -n -f -p win -c 000000 -t -i ~/lol/bg.png
+bindsym $mod+space exec --no-startup-id i3lock -n -f -p win -c 000000
+
+bindsym $mod+p exec --no-startup-id xrandr --output eDP1 --off && xset s on +dpms
+bindsym $mod+Shift+p exec --no-startup-id xrandr --output eDP1 --mode 1920x1080 && xset s on +dpms
+
+bindsym $mod+o exec --no-startup-id xrandr --output HDMI1 --mode 1920x1080
+bindsym $mod+Shift+o exec --no-startup-id xrandr --output HDMI1 --off
+
+for_window [class="Mate-calc"] floating enable, resize set 500 900, move position 1400px 330px
+for_window [class="kronometer"] floating enable, resize set 500 900, move position 1600px 430px
+
+hide_edge_borders smart
+#gaps inner 2
+#gaps outer 8
+floating_modifier $mod
+workspace_auto_back_and_forth yes
+default_border pixel 4
+default_floating_border pixel 10
+
+#### AUDIO ####
+
+#bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec ~/script/volbright vol-up && $refresh_i3status
+
+#bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec ~/script/volbright vol-down && $refresh_i3status
+
+bindsym Ctrl+Shift+k exec --no-startup-id pactl set-source-mute alsa_input.pci-0000_00_1f.3.analog-stereo
+bindsym Ctrl+Shift+l exec --no-startup-id pactl set-source-mute v4l2_input.pci-0000_00_14.0-usb-0_7_1.0 1
+
+bindsym XF86AudioMute exec ~/script/volbright vol-toggle && $refresh_i3status
+#--no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym KP_Subtract exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# pactl list short sinks
+# pactl list sinks short
+
+#### AUDIO CARD PROFILE ####
+
+#bindsym exec --no-startup-id pactl set-card-profile alsa_output.usb-Sony_Interactive_Entertainment_Wireless_Controller-00.analog-stereo
+
+bindsym XF86AudioPrev exec --no-startup-id pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:analog-stereo+input:analog-stereo
+bindsym Shift+KP_Divide exec --no-startup-id pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo+input:analog-stereo
+
+#### AUDIO SINKS ####
+
+bindsym Ctrl+XF86AudioNext exec --no-startup-id pactl set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
+bindsym XF86AudioNext exec --no-startup-id pactl set-default-sink alsa_output.usb-Samsung_USBC_Headset_20190816-00.analog-stereo 
+bindsym Shift+KP_Multiply exec --no-startup-id pactl set-default-sink alsa_output.pci-0000_00_03.0.hdmi-stereo
+bindsym Ctrl+KP_Multiply exec --no-startup-id pactl set-default-sink bluez_output.B8_F6_53_95_AE_12.1
+
+#### MOUSE ####
+
+bindsym --whole-window button9 kill
+bindsym --whole-window button8 exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+
+#### DEFAULT ####
+
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+#bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit ; pkill bat ; pkill up2'"
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+mode "resize" {
+
+        bindsym Right       resize shrink width 10 px or 10 ppt
+        bindsym Down        resize grow height 10 px or 10 ppt
+        bindsym Up          resize shrink height 10 px or 10 ppt
+        bindsym Left        resize grow width 10 px or 10 ppt
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym Mod1+r mode "default"
+}
+
+bindsym Mod1+r mode "resize"
+
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+set $h1 " "
+set $h2 "  "
+set $h3 "   "
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace $h1
+bindsym $mod+8 workspace $h2
+bindsym $mod+9 workspace $h3
+bindsym $mod+0 workspace number $ws10
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace $h1
+bindsym $mod+Shift+8 move container to workspace $h2
+bindsym $mod+Shift+9 move container to workspace $h3
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+set $mod Mod1
+set $refresh_i3status killall -SIGUSR1 i3status
+set $term alacritty
+
+font pango:Terminus 20

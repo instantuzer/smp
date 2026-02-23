@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+ACTION="$1"
+
+print_status() {
+    echo "=== Microphone Status ==="
+
+    if command -v wpctl >/dev/null 2>&1; then
+        # PipeWire
+        if wpctl get-volume @DEFAULT_SOURCE@ | grep -q MUTED; then
+            echo "Microphone is muted"
+        else
+            echo "Microphone is active (not muted)"
+        fi
+    else
+        # PulseAudio fallback
+        if pactl get-source-mute @DEFAULT_SOURCE@ | grep -q "yes"; then
+            echo "Microphone is muted"
+        else
+            echo "Microphone is active (not muted)"
+        fi
+    fi
+
+    echo ""
+    echo "=== Camera Status ==="
+
+    if lsmod | grep -qE "uvcvideo"; then
+        echo "Camera driver (uvcvideo) loaded → Camera likely enabled"
+    elif ls /dev/video* >/dev/null 2>&1; then
+        echo "Video device detected (driver may be unloaded)"
+    else
+        echo "No camera device detected"
+    fi
+}
+
+mic_on() {
+    if command -v wpctl >/dev/null 2>&1; then
+        wpctl set-mute @DEFAULT_SOURCE@ 0
+    else
+        pactl set-source-mute @DEFAULT_SOURCE@ 0
+    fi
+    echo "Microphone unmuted"
+}
+
+mic_off() {
+    if command -v wpctl >/dev/null 2>&1; then
+        wpctl set-mute @DEFAULT_SOURCE@ 1
+    else
+        pactl set-source-mute @DEFAULT_SOURCE@ 1
+    fi
+    echo "Microphone muted"
+}
+
+cam_on() {
+    if sudo modprobe uvcvideo; then
+        echo "Camera enabled (uvcvideo module loaded)"
+    else
+        echo "Failed to enable camera"
+    fi
+}
+
+cam_off() {
+    if sudo modprobe -r uvcvideo; then
+        echo "Camera disabled (uvcvideo module unloaded)"
+    else
+        echo "Failed to disable camera (may be in use)"
+    fi
+}
+
+case "$ACTION" in
+    status|"")
+        print_status
+        ;;
+    mic-on)
+        mic_on
+        ;;
+    mic-off)
+        mic_off
+        ;;
+    cam-on)
+        cam_on
+        ;;
+    cam-off)
+        cam_off
+        ;;
+    *)
+        echo "Usage:"
+        echo "  $0 status"
+        echo "  $0 mic-on | mic-off"
+        echo "  $0 cam-on | cam-off"
+        ;;
+esac

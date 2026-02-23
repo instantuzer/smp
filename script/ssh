@@ -1,0 +1,4 @@
+#!/bin/sh
+USR=$(rofi -show-icons -theme gruvbox-dark -dmenu -p "SSH Username")
+[ -n "$USR" ] && exec alacritty -e ssh "$USR@192.168.178.20"
+

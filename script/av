@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+echo "=== Microphone Status ==="
+
+# Detect PipeWire or PulseAudio
+if command -v wpctl >/dev/null 2>&1; then
+    # PipeWire
+    MIC_STATUS=$(wpctl status | grep -A 20 "Sources" | grep -E "\*")
+    if [[ -n "$MIC_STATUS" ]]; then
+        if wpctl get-volume @DEFAULT_SOURCE@ | grep -q MUTED; then
+            echo "Microphone is muted"
+        else
+            echo "Microphone is active (not muted)"
+        fi
+    else
+        echo "No active microphone source detected"
+    fi
+else
+    # PulseAudio fallback
+    if pactl get-source-mute @DEFAULT_SOURCE@ | grep -q "yes"; then
+        echo "Microphone is muted"
+    else
+        echo "Microphone is active (not muted)"
+    fi
+fi
+
+
+echo ""
+echo "=== Camera Status ==="
+
+if command -v v4l2-ctl >/dev/null 2>&1; then
+    if v4l2-ctl --list-devices 2>/dev/null | grep -qi "camera\|webcam"; then
+        echo "Camera device detected"
+    elif ls /dev/video* >/dev/null 2>&1; then
+        echo "Video device detected (possible camera)"
+    else
+        echo "No camera device detected"
+    fi
+else
+    if ls /dev/video* >/dev/null 2>&1; then
+        echo "Video device detected (install v4l-utils for more details)"
+    else
+        echo "No camera device detected"
+    fi
+fi

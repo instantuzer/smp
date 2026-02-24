@@ -1,0 +1,175 @@
+#!/bin/bash
+set -euo pipefail
+
+sleep 0.2
+
+read -rp "USERNAME: " USERNAME
+while true; do
+    read -rsp "PASSWD: " PASSWORD
+    echo
+    read -rsp "CONFIRM PASSWD: " PASSWORD_CONFIRM
+    echo
+    if [ "$PASSWORD" = "$PASSWORD_CONFIRM" ]; then
+        break
+    else
+        echo "Passwords do not match. Please try again."
+    fi
+done
+
+#read -rp "REGION: " R
+R="Europe/Amsterdam"
+
+HDD=nvme0n1
+DISK="/dev/$HDD"
+SIZE1=3G
+SIZE2=275G
+SIZE3=4G
+EX=p
+CNTRY=NL
+CR=cryptroot
+
+reflector -c "$CNTRY" -p https --age 4 --latest 15 --save /etc/pacman.d/mirrorlist
+sed -i 's/^SigLevel.*/SigLevel = Never/' /etc/pacman.conf
+sed -i 's/^LocalFileSigLevel.*/LocalFileSigLevel = Never/' /etc/pacman.conf
+sed -i '/^\[options\]/a \
+Color' /etc/pacman.conf
+
+pacman -Sy
+
+cat /etc/pacman.d/mirrorlist
+
+echo
+lsblk
+echo
+
+echo "ALL DATA ON DISK $DISK WILL BE ERASED!"
+echo
+echo "GOING TO PARTITION $DISK..."
+echo
+
+#read -n 1 -s -r -p "Press a key to continue..."
+
+#while true; do
+#    read -n 1 -s -r -p "PROCEED? Type a letter...(Yy/Nn) " answer
+#    echo
+#    case $answer in
+#        [Yy]* ) echo "Continuing..."; break;;
+#        [Nn]* ) echo "Aborted."; exit 1;;
+#        * ) echo "Please answer y or n.";;
+#    esac
+#done
+
+echo
+
+#sgdisk -Z $DISK
+#sgdisk -o $DISK
+
+echo
+#read -n 1 -s -r -p "Press a key to continue..."
+echo
+echo
+
+sgdisk -n 4:: -t 4:8300 -c 4:"SECONDROOT" $DISK
+
+echo
+lsblk
+echo
+#read -n 1 -s -r -p "Press a key to continue..."
+echo
+echo
+
+cryptsetup luksFormat --batch-mode ${DISK}${EX}4
+cryptsetup luksOpen ${DISK}${EX}4 $CR
+
+mkfs.xfs /dev/mapper/$CR
+
+swapon ${DISK}${EX}3
+
+PART_UUID=$(blkid -s UUID -o value "${DISK}${EX}4")
+
+mount /dev/mapper/$CR /mnt
+mount -o umask=0077 -m ${DISK}${EX}1 /mnt/boot
+
+#timedatectl set-timezone $R
+#pacman-key --init
+
+pacstrap -K /mnt base
+
+genfstab -U /mnt >> /mnt/etc/fstab
+
+arch-chroot /mnt bash <<😺
+set -e
+
+pacman -S --noconfirm mkinitcpio
+
+#sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect modconf keyboard block encrypt filesystems)/' /etc/mkinitcpio.conf
+
+sed -i 's/^HOOKS=.*/HOOKS=(base systemd autodetect keyboard block sd-encrypt filesystems)/' /etc/mkinitcpio.conf
+
+#echo "KEYMAP=us" >> /etc/vconsole.conf
+
+sed -i 's/^SigLevel.*/SigLevel = Never/' /etc/pacman.conf
+sed -i 's/^LocalFileSigLevel.*/LocalFileSigLevel = Never/' /etc/pacman.conf
+sed -i '/^\[options\]/a \
+Color' /etc/pacman.conf
+
+curl -LO https://github.com/instantuzer/install/raw/main/wlpkg
+
+grep -v '^\s*#' wlpkg | pacman -S --needed --noconfirm -
+
+echo "root:$PASSWORD" | chpasswd
+
+useradd -mG wheel $USERNAME
+echo "$USERNAME:$PASSWORD" | chpasswd
+echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+
+sed -i 's/fmask=0022,dmask=0022/umask=0077/' /etc/fstab
+sed -i '/\bxfs\b/ s/\brelatime\b/noatime/g' /etc/fstab
+sed -i '/\s\/\s/ s/\([[:space:]]\)1$/\10/' /etc/fstab
+
+#grub-install --efi-directory=/
+#grub-mkconfig -o //grub/grub.cfg
+
+echo "title notebook3" >> /boot/loader/entries/arch3.conf
+echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/arch3.conf
+echo "initrd /intel-ucode.img" >> /boot/loader/entries/arch3.conf
+echo "initrd /initramfs-linux-zen.img" >> /boot/loader/entries/arch3.conf
+echo "options rd.luks.name=$PART_UUID=$CR root=/dev/mapper/$CR rw" >> /boot/loader/entries/arch3.conf
+
+echo "[zram0]" >> /etc/systemd/zram-generator.conf
+echo "zram-size = ram / 2" >> /etc/systemd/zram-generator.conf
+echo "compression-algorithm = lz4" >> /etc/systemd/zram-generator.conf
+
+echo "vm.swappiness=10" >> /etc/sysctl.d/99-swappiness.conf
+
+#echo "Section \"InputClass\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf
+#echo "    Identifier \"touchpad\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf
+#echo "    MatchIsTouchpad \"on\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf
+#echo "    Driver \"libinput\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf
+#echo "    Option \"Tapping\" \"on\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf
+#echo "EndSection" >> /etc/X11/xorg.conf.d/30-touchpad.conf
+
+#echo "Section \"InputClass\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+#echo "    Identifier \"system-keyboard\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+#echo "    MatchIsKeyboard \"on\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+#echo "    Option \"XkbOptions\" \"caps:escape_shifted_capslock\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+#echo "EndSection" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+
+systemctl enable NetworkManager
+
+systemctl enable fstrim.timer
+
+echo "notebook3" >> /etc/hostname
+
+ln -sf /usr/share/zoneinfo/$R /etc/localtime
+hwclock --systohc
+
+#su - $USERNAME -c 'mkdir lol && cd lol && git clone https://github.com/instantuzer/install . && stow --no-folding --adopt . && git restore .'
+
+😺
+
+echo
+echo
+echo "hello world"
+echo
+echo

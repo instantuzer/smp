@@ -42,10 +42,10 @@ whois
 #xclip
 #man
 #noto-fonts
-#noto-fonts-cjk
-#noto-fonts-emoji
+noto-fonts-cjk
+noto-fonts-emoji
 #ttf-terminus-nerd
-#terminus-font
+terminus-font
 #otf-font-awesome
 gammastep
 #feh

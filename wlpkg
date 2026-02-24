@@ -126,7 +126,6 @@ ncdu
 #maim
 acpi
 cmake
-#linux
 #dunst
 github-cli
 eza
@@ -154,6 +153,7 @@ zoxide
 #xorg-xrdb
 #xorg-xsetroot
 #xorg-xwininfo
-linux-zen
+#linux-zen
+linux
 linux-firmware-intel
 intel-ucode

@@ -84,6 +84,8 @@ alias vd='vimdiff'
 
 alias lak='cryptsetup luksAddKey'
 alias lrk='cryptsetup luksRemoveKey'
+alias cs='cryptsetup'
+alias cso='cryptsetup luksOpen'
 
 alias cd='z'
 alias treee='tree -a -I .git'

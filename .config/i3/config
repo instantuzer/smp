@@ -68,9 +68,9 @@ bar {
     height 37
     status_command i3status
     colors {
-           background #0c0c0c
+           background #181818
            focused_statusline #ffa800
-           inactive_workspace #33333300 #0c0c0c #888888
+           inactive_workspace #33333300 #181818 #888888
     }
 }
 

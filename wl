@@ -131,9 +131,9 @@ sed -i '/\s\/\s/ s/\([[:space:]]\)1$/\10/' /etc/fstab
 #grub-mkconfig -o //grub/grub.cfg
 
 echo "title notebook3" >> /boot/loader/entries/arch3.conf
-echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/arch3.conf
+echo "linux /vmlinuz-linux" >> /boot/loader/entries/arch3.conf
 echo "initrd /intel-ucode.img" >> /boot/loader/entries/arch3.conf
-echo "initrd /initramfs-linux-zen.img" >> /boot/loader/entries/arch3.conf
+echo "initrd /initramfs-linux.img" >> /boot/loader/entries/arch3.conf
 echo "options rd.luks.name=$PART_UUID=$CR root=/dev/mapper/$CR rw" >> /boot/loader/entries/arch3.conf
 
 echo "[zram0]" >> /etc/systemd/zram-generator.conf

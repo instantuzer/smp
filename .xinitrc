@@ -17,6 +17,6 @@ if [ -f ~/.xprofile ]; then
     . ~/.xprofile
 fi
 
-xsetroot -solid "#c0c0c0"
+xsetroot -solid "#0c0c0c"
 xset b off
 exec i3

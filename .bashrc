@@ -20,8 +20,10 @@ fi
 
 #### main ####
 
-alias gr='grep -R -I'
+alias gr='grep -R -I --exclude-dir={.cache,firefox}'
 alias cmp='grep -Fx -f'
+
+alias p='ping 1.1.1.1'
 
 alias vam='vim $(fzf --preview="bat --color=always {}")'
 alias v='vim'

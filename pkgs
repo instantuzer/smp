@@ -1,4 +1,5 @@
 sudo
+docker
 xfsprogs
 #cryptsetup
 zram-generator

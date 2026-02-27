@@ -1,5 +1,6 @@
 sudo
-docker
+#docker
+podman
 xfsprogs
 #cryptsetup
 zram-generator

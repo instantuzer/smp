@@ -125,6 +125,7 @@ alias ll='cd ~/lol && eza -la'
 
 alias y='yazi'
 alias py='python'
+alias yt='yt-dlp'
 
 alias cls='clear'
 alias clr='clear'

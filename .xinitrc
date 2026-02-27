@@ -1,5 +1,6 @@
 #xrandr --output HDMI1 --mode 1920x1080
-xrandr --output HDMI1 --above eDP1
+#xrandr --output HDMI1 --above eDP1
+xrandr --output HDMI1 --right-of eDP1
 #xrandr --output HDMI1 --same-as eDP1
 #export SUDO_EDITOR=vim
 #export EDITOR=vim

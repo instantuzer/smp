@@ -44,7 +44,7 @@ alias fup='flatpak update'
 
 #### pacman ####
 
-alias up='echo "" && echo "PACMAN pkgs" && sudo pacman -Syu --ignore appname && echo "" && echo "" && echo "FLATPAK pkgs" && flatpak update'
+alias up='echo "" && echo "PACMAN pkgs" && sudo pacman -Syu --ignore linux && echo "" && echo "" && echo "FLATPAK pkgs" && flatpak update'
 alias is='sudo pacman -S --needed'
 alias qu='sudo pacman -Qu'
 alias cu='checkupdates'

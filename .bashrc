@@ -34,7 +34,6 @@ alias f2='fd --full-path --type f /etc /usr /usr/local /home /var | fzf'
 alias bt='systemctl start bluetooth'
 alias btc='bluetoothctl'
 
-alias stw='stow --no-folding --adopt . && git restore .'
 alias count='i=0; while true; do printf "\r%d" "$i"; ((i++)); sleep 1; done'
 
 #### flatpak ####
@@ -75,9 +74,11 @@ alias gch='cd ~/lol & git log -p -U0 --no-prefix'
 alias god='git log -p  --unified=0 | grep -E '^-' | bat'
 alias gn='gh repo create --private --source=. --remote=origin'
 alias gl='git log -p --follow --'
+alias gcr='gh repo create my-new-repo --private --source=. --remote=origin --push'
 
 alias resto='git restore .'
 alias sto='stow --adopt --no-folding .'
+alias stw='stow --no-folding --adopt . && git restore .'
 
 alias cb='cat ~/.bashrc | grep'
 alias key='cat ~/.config/i3/config | grep'

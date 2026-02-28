@@ -43,7 +43,7 @@ sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect modconf keyboard block encrypt f
 sed -i 's/^SigLevel.*/SigLevel = Never/' /etc/pacman.conf
 sed -i 's/^LocalFileSigLevel.*/LocalFileSigLevel = Never/' /etc/pacman.conf
 
-pacman -S --needed --noconfirm linux-zen linux-firmware-intel intel-ucode networkmanager sudo vim git stow
+pacman -S --needed --noconfirm linux-zen linux-firmware-intel intel-ucode networkmanager sudo vim git stow hyprland waybar firefox github-cli 
 
 echo "root:$PASSWORD" | chpasswd
 

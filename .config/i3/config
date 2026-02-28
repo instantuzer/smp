@@ -79,7 +79,7 @@ bar {
     output HDMI1
     height 37
     status_command i3status
-    position top
+    position bottom
     colors {
            background #171212
            focused_statusline #ffa800

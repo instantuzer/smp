@@ -64,9 +64,8 @@ bindsym Ctrl+slash exec --no-startup-id sh -c "$term -e bluetoothctl connect B8:
 #### MONITOR ####
 
 bar {
-    output eDP1
+    output eDP-1
     height 37
-    status_command i3status
     colors {
            background #171212
            focused_statusline #ffa800
@@ -76,9 +75,8 @@ bar {
 }
 
 bar {
-    output HDMI1
+    output HDMI-1
     height 37
-    status_command i3status
     position bottom
     colors {
            background #171212

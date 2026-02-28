@@ -43,6 +43,8 @@ sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect modconf keyboard block encrypt f
 sed -i 's/^SigLevel.*/SigLevel = Never/' /etc/pacman.conf
 sed -i 's/^LocalFileSigLevel.*/LocalFileSigLevel = Never/' /etc/pacman.conf
 
+pacman -S --needed --noconfirm linux-zen linux-firmware-intel intel-ucode networkmanager sudo vim git stow
+
 echo "root:$PASSWORD" | chpasswd
 
 useradd -mG wheel $USERNAME
@@ -56,7 +58,7 @@ echo "title ubuntu" >> /boot/loader/entries/arch.conf
 echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/arch.conf
 echo "initrd /intel-ucode.img" >> /boot/loader/entries/arch.conf
 echo "initrd /initramfs-linux-zen.img" >> /boot/loader/entries/arch.conf
-echo "options cryptdevice=UUID=$PART_UUID=croot root=/dev/mapper/croot rw" >> /boot/loader/entries/arch.conf
+echo "options cryptdevice=UUID=$PART_UUID:croot root=/dev/mapper/croot rw" >> /boot/loader/entries/arch.conf
 
 systemctl enable NetworkManager
 systemctl enable fstrim.timer
